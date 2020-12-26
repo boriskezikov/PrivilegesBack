@@ -28,15 +28,28 @@ public class SMTPService extends Authenticator {
             message.setFrom(new InternetAddress(propsProvider.getUsername()));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
             message.setSubject("Web App auth");
-            message.setText(String.format(
-                    "Your verification code: %s \nRegards,\nGreenApp team.", code));
-
+            message.setText(String.format("Your verification code: %s \nRegards,\nWebApp team.", code));
             Transport.send(message);
         } catch (MessagingException e) {
             log.error(e.getMessage());
         }
         log.info("Code {} delivered to {}", code, targetEmail);
 
+    }
+
+    public void sendAccountExpired(String targetEmail) {
+
+        try {
+            MimeMessage message = new MimeMessage(getSession());
+            message.setFrom(new InternetAddress(propsProvider.getUsername()));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
+            message.setSubject("Web App auth");
+            message.setText("Your account hasn't been activated in 5 minutes. All details removed.\n" +
+                    "For access to the portal, please proceed account creation procedure again. \nRegards,\nWebApp team.");
+            Transport.send(message);
+        } catch (MessagingException e) {
+            log.error(e.getMessage());
+        }
     }
 
     private Session getSession() {

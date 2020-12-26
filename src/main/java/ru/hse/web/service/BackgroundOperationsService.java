@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class BackgroundOperationsService {
 
     private final UserRepository userRepository;
+    private final SMTPService smtpService;
 
     @Scheduled(cron = "0 0/5 * * * *")
     public void deleteUnsignedUser() {
@@ -27,6 +28,7 @@ public class BackgroundOperationsService {
             if (Duration.between(user.getTimeCreated(), now).toMinutes() >= 5) {
                 toDelete.add(user);
                 log.info("Record {} added to remove list", user.getId());
+                smtpService.sendAccountExpired(user.getPrimaryEmail());
             }
         });
         userRepository.deleteAll(toDelete);
