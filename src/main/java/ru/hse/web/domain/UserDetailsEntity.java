@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.hse.web.model.Rule;
 
 import javax.persistence.CascadeType;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -49,6 +51,7 @@ public class UserDetailsEntity {
     @Column(nullable = false)
     private String primaryEmail;
 
+
     @Column(nullable = false)
     private String password;
 
@@ -60,4 +63,7 @@ public class UserDetailsEntity {
 
     @Column
     private boolean isActive;
+
+    @CreationTimestamp
+    private LocalDateTime timeCreated;
 }
