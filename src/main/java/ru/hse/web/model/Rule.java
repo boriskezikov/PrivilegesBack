@@ -1,0 +1,12 @@
+package ru.hse.web.model;
+
+public enum Rule {
+    FIRST_DEGREE_DISABLED,
+    SECOND_DEGREE_DISABLED,
+    THIRD_DEGREE_DISABLED,
+    WAR_VETERAN,
+    STUDENT,
+    EMERGENCY_LIQUIDATOR,
+    RETIREE,
+    ASSIGNED_TO_STATE_AWARD
+}

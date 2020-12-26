@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/postgres"
+    driverClassName: org.postgresql.Driver
+    username: adminapp
+    password: adminapp
+  jpa:
+#   database-platform: org.hibernate.dialect.
+    hibernate:
+      ddl-auto: update
