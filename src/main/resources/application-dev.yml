@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/postgres"
+    driverClassName: org.postgresql.Driver
+    username: adminapp
+    password: adminapp
+  jpa:
+    hibernate:
+      ddl-auto: update
