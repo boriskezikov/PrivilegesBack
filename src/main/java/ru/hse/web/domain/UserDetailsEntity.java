@@ -7,21 +7,28 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.ManyToAny;
 import ru.hse.web.model.Role;
 import ru.hse.web.model.Rule;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -58,10 +65,14 @@ public class UserDetailsEntity {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<PrivilegeEntity> privileges;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "privileges")
+    private List<PrivilegeEntity> privileges = new ArrayList<>();
 
-    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    @Column(name = "grade", nullable = false)
+    @ElementCollection(targetClass = Rule.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_details_grades")
     private Set<Rule> grades;
 
     @JsonIgnore
@@ -77,6 +88,7 @@ public class UserDetailsEntity {
 
     @Builder.Default
     @JsonIgnore
+    @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
 }

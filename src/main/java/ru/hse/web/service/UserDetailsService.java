@@ -2,6 +2,7 @@ package ru.hse.web.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.ap.internal.util.Collections;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,14 +13,18 @@ import ru.hse.web.dto.AssignPrivilegeDto;
 import ru.hse.web.dto.CreateUserInstanceDto;
 import ru.hse.web.dto.FactorDto;
 import ru.hse.web.dto.PrincipalDto;
+import ru.hse.web.model.Rule;
 import ru.hse.web.repository.PrivilegeRepository;
 import ru.hse.web.repository.UserRepository;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Random;
 
 import static java.lang.String.format;
+import static ru.hse.web.service.Utils.buildFullName;
+import static ru.hse.web.service.Utils.generateFactorCode;
 
 @Service
 @Slf4j
@@ -50,7 +55,7 @@ public class UserDetailsService {
                 .build();
         inactiveUser = userRepository.save(inactiveUser);
         log.info("Anonymous user {} has been created", inactiveUser.getId());
-        smtp.sendSecurityCode(inactiveUser.getPrimaryEmail(), factorCode, buildFullName(inactiveUser.getFirstName(), inactiveUser.getLastName()));
+        smtp.sendSecurityCodeNotification(inactiveUser.getPrimaryEmail(), factorCode, buildFullName(inactiveUser.getFirstName(), inactiveUser.getLastName()));
         return inactiveUser;
     }
 
@@ -60,7 +65,7 @@ public class UserDetailsService {
                 userDetails.setActive(true);
                 userRepository.save(userDetails);
                 log.info("User {} has been activated", factorDto.getUserId());
-                smtp.sendAccountActivated(userDetails.getPrimaryEmail(), buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
+                smtp.sendAccountActivatedNotification(userDetails.getPrimaryEmail(), buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
             } else {
                 throw new IllegalArgumentException("Codes does not match!");
             }
@@ -79,7 +84,7 @@ public class UserDetailsService {
             user.getPrivileges().add(assignment);
             var userDetails = userRepository.save(user);
             log.info("Privilege {} assigned to user {}", assignPrivilegeDto.getPrivilegeId(), assignPrivilegeDto.getUserId());
-            smtp.sendPrivilegeAssigned(userDetails.getPrimaryEmail(), assignment, buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
+            smtp.sendPrivilegeAssignedNotification(userDetails.getPrimaryEmail(), assignment, buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
             return userDetails;
         }
         throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
@@ -93,20 +98,11 @@ public class UserDetailsService {
         if (!ud.isActive()) {
             throw new IllegalStateException(format("Account %s is not active! Activate account and login again.", ud.getId()));
         }
-        smtp.sendLoginAction(ud.getPrimaryEmail(), buildFullName(ud.getFirstName(), ud.getLastName()));
+        smtp.sendLoginActionNotification(ud.getPrimaryEmail(), buildFullName(ud.getFirstName(), ud.getLastName()));
         return ud;
     }
 
     public List<UserDetailsEntity> findAll() {
         return userRepository.findAll();
     }
-
-    private String generateFactorCode() {
-        return String.valueOf(new Random().nextInt(9995));
-    }
-
-    private String buildFullName(String f, String l) {
-        return f + ' ' + l;
-    }
-
 }

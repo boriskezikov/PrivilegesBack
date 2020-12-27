@@ -98,7 +98,7 @@ public class PrivilegeController {
     }
 
     @Operation(summary = "Filter searching for privileges")
-    @PostMapping("/find")
+    @GetMapping("/find")
     @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
     public List<PrivilegeEntity> find(@RequestBody @Validated FindPrivilegeDTO findPrivilegeDTO) {
         return privilegeService.find(findPrivilegeDTO);

@@ -26,16 +26,16 @@ public class SMTPService extends Authenticator {
 
     private final SMTPPropsProvider propsProvider;
     private static final String SIGNATURE = "\n\nRegards, WebApp team. \nPlease contact us with any questions by state-privilege.helpdesk@internet.ru";
-    private static final String PREFIX = "Dear,%s.\n\n";
+    private static final String PREFIX = "Dear, %s.\n\n";
 
     @Async
-    public void sendSecurityCode(String targetEmail, String code, String name) {
+    public void sendSecurityCodeNotification(String targetEmail, String code, String name) {
         String text = format(PREFIX, name) + format("Your verification code: %s" + SIGNATURE, code);
         send(text, targetEmail);
     }
 
     @Async
-    public void sendAccountExpired(String targetEmail, String name) {
+    public void sendAccountExpiredNotification(String targetEmail, String name) {
         String text = format(PREFIX, name) + "Your account hasn't been activated in 5 minutes. All details removed.\n" +
                 "For access to the portal, please proceed account creation procedure again." +
                 SIGNATURE;
@@ -43,24 +43,32 @@ public class SMTPService extends Authenticator {
     }
 
     @Async
-    public void sendAccountActivated(String targetEmail, String name) {
+    public void sendAccountActivatedNotification(String targetEmail, String name) {
         String text = format(PREFIX, name) + "Your account has been successfully activated!" + SIGNATURE;
         send(text, targetEmail);
 
     }
 
     @Async
-    public void sendLoginAction(String targetEmail, String name) {
+    public void sendLoginActionNotification(String targetEmail, String name) {
         LocalDateTime now = LocalDateTime.now();
         String text = format(PREFIX, name) + format("Signed in to your account. Time: %s. If it wasn't you, please contact us immediately!", now) + SIGNATURE;
         send(text, targetEmail);
     }
 
     @Async
-    public void sendPrivilegeAssigned(String targetEmail, PrivilegeEntity privilegeEntity, String name) {
+    public void sendPrivilegeUpdatedNotification(String targetEmail, String name, String privHeader) {
+        String text = format(PREFIX, name) +
+                format("The terms of the benefit %s have changed. Please check them on our web site.", privHeader) +
+                SIGNATURE;
+        send(text, targetEmail);
+    }
+
+    @Async
+    public void sendPrivilegeAssignedNotification(String targetEmail, PrivilegeEntity privilegeEntity, String name) {
         String text = format(PREFIX, name) + format("Congratulations!" +
                         " You have been assigned benefit %s, signed by ministry '%s'. For any additional information please visit our web-site!" + SIGNATURE,
-                privilegeEntity.getText(), privilegeEntity.getLegalMinistry());
+                privilegeEntity.getName(), privilegeEntity.getLegalMinistry());
         send(text, targetEmail);
     }
 

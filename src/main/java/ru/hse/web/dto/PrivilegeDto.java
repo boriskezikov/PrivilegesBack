@@ -17,7 +17,8 @@ public class PrivilegeDto {
 
     private BigInteger id;
     private String legalMinistry;
-    private String text;
+    private String description;
+    private String name;
     private boolean availableForAssignment;
     private Set<Rule> gradesRequired;
 }
