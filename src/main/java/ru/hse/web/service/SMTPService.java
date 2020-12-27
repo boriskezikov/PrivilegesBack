@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class SMTPService extends Authenticator {
 
     private final SMTPPropsProvider propsProvider;
-    private static final String sign = "\n\nRegards, WebApp team. \nPlease contact us with any questions by app.green@mail.ru";
+    private static final String sign = "\n\nRegards, WebApp team. \nPlease contact us with any questions by state-privilege.helpdesk@internet.ru";
 
     @Async
     public void sendSecurityCode(String targetEmail, String code) {
