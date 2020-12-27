@@ -70,4 +70,5 @@ public class UserDetailsController {
     public UserDetailsEntity login(@RequestBody PrincipalDto principal) {
         return userDetailsService.login(principal);
     }
+
 }

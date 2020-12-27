@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import ru.hse.web.configuration.SMTPPropsProvider;
 import ru.hse.web.domain.PrivilegeEntity;
+import ru.hse.web.model.AssignmentStatus;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -66,6 +67,14 @@ public class SMTPService extends Authenticator {
     }
 
     @Async
+    public void sendAssignmentStatusUpdated(String targetEmail, String name, PrivilegeEntity privilegeEntity, AssignmentStatus status) {
+        String text = format(PREFIX, name)
+                + format("Status of your assignment for privilege '%s' has been changed. Current status: '%s'", privilegeEntity.getName(), status)
+                + SIGNATURE;
+        send(text, targetEmail);
+    }
+
+    @Async
     public void sendPrivilegeAssignedNotification(String targetEmail, PrivilegeEntity privilegeEntity, String name) {
         String text = format(PREFIX, name) + format("Congratulations!" +
                         " You have been assigned benefit %s, signed by ministry '%s'. For any additional information please visit our web-site!" + SIGNATURE,
@@ -73,6 +82,7 @@ public class SMTPService extends Authenticator {
         send(text, targetEmail);
     }
 
+    @Async
     public void sendAvailablePrivilegesNotification(String targetEmail, String name, List<PrivilegeEntity> privileges) {
         var assignment = "Name: %s \n Description: %s \n Authorized ministry: %s \n Date added to registry: %s \n\n";
         var text = format(PREFIX, name) + "We have detected that this list of privileges is available for assignment according to your info: \n %s" + SIGNATURE;

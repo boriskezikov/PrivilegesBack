@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
+import ru.hse.web.domain.AssignmentEntity;
 import ru.hse.web.domain.PrivilegeEntity;
+import ru.hse.web.dto.FindAssignmentDto;
 import ru.hse.web.dto.FindPrivilegeDTO;
 import ru.hse.web.dto.PrivilegeDto;
 import ru.hse.web.dto.Sort;
@@ -26,35 +28,35 @@ import static java.util.Optional.ofNullable;
 
 @Repository
 @RequiredArgsConstructor
-public class PrivilegeRepositoryImpl {
+public class AssignmentRepositoryImpl {
 
     private final EntityManager entityManager;
 
-
-    public List<PrivilegeEntity> find(FindPrivilegeDTO.SCriteria criteria, Sort sort) {
+    public List<AssignmentEntity> find(FindAssignmentDto.SCriteria criteria, Sort sort) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<PrivilegeEntity> query = criteriaBuilder.createQuery(PrivilegeEntity.class);
-        Root<PrivilegeEntity> root = query.from(PrivilegeEntity.class);
+        CriteriaQuery<AssignmentEntity> query = criteriaBuilder.createQuery(AssignmentEntity.class);
+        Root<AssignmentEntity> root = query.from(AssignmentEntity.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
-        ofNullable(criteria.getIds()).ifPresent(option -> {
+        ofNullable(criteria.getUsersIds()).ifPresent(option -> {
             CriteriaBuilder.In<BigInteger> inClause = criteriaBuilder.in(root.get("id"));
             option.forEach(inClause::value);
             predicates.add(inClause);
         });
 
-        ofNullable(criteria.getGrades())
-                .ifPresent(option -> option.forEach(member -> {
-                    predicates.add(criteriaBuilder.isMember(member, root.get("gradesRequired")));
-                }));
+        ofNullable(criteria.getAssignmentIds()).ifPresent(option -> {
+            CriteriaBuilder.In<BigInteger> inClause = criteriaBuilder.in(root.get("id"));
+            option.forEach(inClause::value);
+            predicates.add(inClause);
+        });
 
-        ofNullable(criteria.getLegalMinistry())
-                .ifPresent(option -> predicates.add(criteriaBuilder.equal(root.get("legalMinistry"), option)));
+        ofNullable(criteria.getAssignmentStatus())
+                .ifPresent(option -> predicates.add(criteriaBuilder.equal(root.get("assignmentStatus"), option)));
 
         ofNullable(sort)
                 .ifPresent(sortingStrategy -> {
-                    if (Arrays.stream(PrivilegeDto.class.getDeclaredFields())
+                    if (Arrays.stream(FindAssignmentDto.class.getDeclaredFields())
                             .map(Field::getName)
                             .collect(Collectors.toList()).contains(sort.getSortBy())) {
                         if (sort.getType().equals(SortOrder.ASCENDING)) {
@@ -71,4 +73,5 @@ public class PrivilegeRepositoryImpl {
         query.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
+
 }
