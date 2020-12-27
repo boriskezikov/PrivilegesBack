@@ -32,7 +32,7 @@ public class BackgroundOperationsService {
             if (Duration.between(user.getTimeCreated(), now).toMinutes() >= expiryTime) {
                 toDelete.add(user);
                 log.info("Record {} added to remove list", user.getId());
-                smtpService.sendAccountExpired(user.getPrimaryEmail());
+                smtpService.sendAccountExpired(user.getPrimaryEmail(), "client");
             }
         });
         userRepository.deleteAll(toDelete);

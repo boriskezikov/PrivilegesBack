@@ -50,7 +50,7 @@ public class UserDetailsService {
                 .build();
         inactiveUser = userRepository.save(inactiveUser);
         log.info("Anonymous user {} has been created", inactiveUser.getId());
-        smtp.sendSecurityCode(inactiveUser.getPrimaryEmail(), factorCode);
+        smtp.sendSecurityCode(inactiveUser.getPrimaryEmail(), factorCode, buildFullName(inactiveUser.getFirstName(), inactiveUser.getLastName()));
         return inactiveUser;
     }
 
@@ -60,7 +60,7 @@ public class UserDetailsService {
                 userDetails.setActive(true);
                 userRepository.save(userDetails);
                 log.info("User {} has been activated", factorDto.getUserId());
-                smtp.sendAccountActivated(userDetails.getPrimaryEmail());
+                smtp.sendAccountActivated(userDetails.getPrimaryEmail(), buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
             } else {
                 throw new IllegalArgumentException("Codes does not match!");
             }
@@ -79,7 +79,7 @@ public class UserDetailsService {
             user.getPrivileges().add(assignment);
             var userDetails = userRepository.save(user);
             log.info("Privilege {} assigned to user {}", assignPrivilegeDto.getPrivilegeId(), assignPrivilegeDto.getUserId());
-            smtp.sendPrivilegeAssigned(userDetails.getPrimaryEmail(), assignment);
+            smtp.sendPrivilegeAssigned(userDetails.getPrimaryEmail(), assignment, buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
             return userDetails;
         }
         throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
@@ -93,7 +93,7 @@ public class UserDetailsService {
         if (!ud.isActive()) {
             throw new IllegalStateException(format("Account %s is not active! Activate account and login again.", ud.getId()));
         }
-        smtp.sendLoginAction(ud.getPrimaryEmail());
+        smtp.sendLoginAction(ud.getPrimaryEmail(), buildFullName(ud.getFirstName(), ud.getLastName()));
         return ud;
     }
 
@@ -103,6 +103,10 @@ public class UserDetailsService {
 
     private String generateFactorCode() {
         return String.valueOf(new Random().nextInt(9995));
+    }
+
+    private String buildFullName(String f, String l) {
+        return f + ' ' + l;
     }
 
 }
