@@ -36,13 +36,13 @@ import static ru.hse.web.Constants.CLIENT;
 @OpenAPIDefinition(info = @Info(title = "Privilege provider service",
         description = "Service for managing civil privileges",
         version = "1.0",
-        contact = @Contact(name = "Kezikov Boris", email = "boris200898@icloud.com")))
+        contact = @Contact(name = "Kezikov Boris, Gorelov Evgen", email = "boris200898@icloud.com")))
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successful request"),
         @ApiResponse(responseCode = "201", description = "Entity created"),
         @ApiResponse(responseCode = "500", description = "Internal error")
 })
-@Tag(name = "PrivilegeController", description = "Access to operations with privileges objects")
+@Tag(name = "PrivilegeController", description = "Access to operations with privilege objects")
 @RestController
 @RequestMapping("/api/v1/privilege")
 @RequiredArgsConstructor

@@ -46,7 +46,6 @@ public class PrivilegeEntity {
     private boolean availableForAssignment;
 
     /*At least one rule must be present for privilege availability*/
-
     @ElementCollection
     private Set<Rule> gradesRequired;
 

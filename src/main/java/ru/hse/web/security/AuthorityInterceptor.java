@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 import static ru.hse.web.Constants.ADMIN;
 import static ru.hse.web.Constants.CLIENT;
@@ -24,7 +25,7 @@ public class AuthorityInterceptor implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String uri = req.getRequestURI();
-        var authHeader = req.getHeader("X_GRANT_ID");
+        var authHeader = Optional.ofNullable(req.getHeader("X_GRANT_ID")).orElse("-");
         if ((uri.contains("privilege") || uri.contains("user")) && req.getMethod().toUpperCase().equals("GET")) {
             if (authHeader.equals(ADMIN) || authHeader.equals(CLIENT)) {
                 chain.doFilter(request, response);

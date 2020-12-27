@@ -22,6 +22,7 @@ public class PrivilegeService {
     private final PrivilegeRepository privilegeRepository;
     private final PrivilegeMapper mapper;
 
+    /***/
     public PrivilegeEntity createPrivilege(PrivilegeDto dto) {
         PrivilegeEntity privilegeEntity = PrivilegeEntity.builder()
                 .availableForAssignment(dto.isAvailableForAssignment())
