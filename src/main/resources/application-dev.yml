@@ -6,8 +6,9 @@ spring:
     password: adminapp
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 bg:
   time:
     expiration_min: 5
-    cron: "0 0/2 * * * *"
+    remove-cron: "0 0/2 * * * *"
+    available-cron: "0 0/30 * * * *"

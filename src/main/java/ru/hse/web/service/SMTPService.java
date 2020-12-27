@@ -16,6 +16,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -26,7 +27,7 @@ public class SMTPService extends Authenticator {
 
     private final SMTPPropsProvider propsProvider;
     private static final String SIGNATURE = "\n\nRegards, WebApp team. \nPlease contact us with any questions by state-privilege.helpdesk@internet.ru";
-    private static final String PREFIX = "Dear, %s.\n\n";
+    private static final String PREFIX = "Dear, %s \n\n";
 
     @Async
     public void sendSecurityCodeNotification(String targetEmail, String code, String name) {
@@ -70,6 +71,15 @@ public class SMTPService extends Authenticator {
                         " You have been assigned benefit %s, signed by ministry '%s'. For any additional information please visit our web-site!" + SIGNATURE,
                 privilegeEntity.getName(), privilegeEntity.getLegalMinistry());
         send(text, targetEmail);
+    }
+
+    public void sendAvailablePrivilegesNotification(String targetEmail, String name, List<PrivilegeEntity> privileges) {
+        var assignment = "Name: %s \n Description: %s \n Authorized ministry: %s \n Date added to registry: %s \n\n";
+        var text = format(PREFIX, name) + "We have detected that this list of privileges is available for assignment according to your info: \n %s" + SIGNATURE;
+        StringBuilder sb = new StringBuilder();
+        privileges.forEach(pr -> sb.append(format(assignment, pr.getName(), pr.getDescription(), pr.getLegalMinistry(), pr.getTimeCreated())).append('\n'));
+        var res = format(text, sb.toString());
+        send(res, targetEmail);
     }
 
     private void send(String text, String email) {
