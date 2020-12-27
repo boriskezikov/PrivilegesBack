@@ -7,3 +7,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+bg:
+  time:
+    expiration_min: 5
+    cron: "0 0/2 * * * *"

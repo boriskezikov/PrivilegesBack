@@ -1,5 +1,6 @@
 package ru.hse.web.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,13 +46,14 @@ public class UserDetailsEntity {
     @Column
     private String middleName;
 
+    @JsonIgnore
     @Column(nullable = false, length = 11)
     private String passport;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String primaryEmail;
 
-
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -61,9 +63,14 @@ public class UserDetailsEntity {
     @ElementCollection
     private Set<Rule> grades;
 
+    @JsonIgnore
     @Column
     private boolean isActive;
 
     @CreationTimestamp
     private LocalDateTime timeCreated;
+
+    @JsonIgnore
+    @Column(nullable = false)
+    private String factor;
 }

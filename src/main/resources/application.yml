@@ -6,4 +6,9 @@ spring:
     password: 089a2f3d631f3b8b200e85cd6cb99465b63cb34be22e6e1cc376b98c70d1c249
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
+
+bg:
+  time:
+    expiration_min: 5
+    cron: "0 0/2 * * * *"

@@ -5,9 +5,11 @@ import org.springframework.stereotype.Repository;
 import ru.hse.web.domain.UserDetailsEntity;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserDetailsEntity, BigInteger> {
 
     boolean existsByPassport(String passport);
+    Optional<UserDetailsEntity> findByPrimaryEmailAndPassword(String mail, String pass);
 }

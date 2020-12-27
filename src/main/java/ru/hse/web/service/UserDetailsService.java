@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.HttpClientErrorException;
-import ru.hse.web.domain.FactorAuthEntity;
 import ru.hse.web.domain.UserDetailsEntity;
 import ru.hse.web.dto.AssignPrivilegeDto;
 import ru.hse.web.dto.CreateUserInstanceDto;
 import ru.hse.web.dto.FactorDto;
-import ru.hse.web.repository.FactorRepository;
+import ru.hse.web.dto.PrincipalDto;
 import ru.hse.web.repository.PrivilegeRepository;
 import ru.hse.web.repository.UserRepository;
 
@@ -27,17 +27,17 @@ import static java.lang.String.format;
 public class UserDetailsService {
 
     private final UserRepository userRepository;
-    private final FactorRepository factorRepository;
     private final PrivilegeRepository privilegeRepository;
     private final SMTPService smtp;
 
-
+    @Transactional
     public UserDetailsEntity createInactiveUser(CreateUserInstanceDto createUserInstanceDto) {
         String userPassport = createUserInstanceDto.getPassport();
         var exists = userRepository.existsByPassport(userPassport);
         if (exists) {
             throw new IllegalStateException(format("User with passport №%s already exists", userPassport));
         }
+        var factorCode = generateFactorCode();
         UserDetailsEntity inactiveUser = UserDetailsEntity.builder()
                 .firstName(createUserInstanceDto.getFirstName())
                 .middleName(createUserInstanceDto.getMiddleName())
@@ -46,30 +46,27 @@ public class UserDetailsService {
                 .grades(createUserInstanceDto.getCategories())
                 .primaryEmail(createUserInstanceDto.getMail())
                 .password(createUserInstanceDto.getPassword())
+                .factor(factorCode)
                 .build();
         inactiveUser = userRepository.save(inactiveUser);
         log.info("Anonymous user {} has been created", inactiveUser.getId());
-        var factorCode = generateFactorCode();
-        factorRepository.save(FactorAuthEntity.builder().user(inactiveUser).factorCode(factorCode).build());
         smtp.sendSecurityCode(inactiveUser.getPrimaryEmail(), factorCode);
         return inactiveUser;
     }
 
     public void activateUser(FactorDto factorDto) {
         userRepository.findById(factorDto.getUserId()).ifPresentOrElse(userDetails -> {
-            FactorAuthEntity factorAuthEntity = factorRepository.findByUser_Id(factorDto.getUserId());
-            if (factorAuthEntity.getFactorCode().equals(factorDto.getFactor())) {
+            if (userDetails.getFactor().equals(factorDto.getFactor())) {
                 userDetails.setActive(true);
                 userRepository.save(userDetails);
                 log.info("User {} has been activated", factorDto.getUserId());
+                smtp.sendAccountActivated(userDetails.getPrimaryEmail());
             } else {
                 throw new IllegalArgumentException("Codes does not match!");
             }
         }, () -> {
             throw new EntityNotFoundException(format("User %s not found", factorDto.getUserId()));
         });
-
-
     }
 
     public UserDetailsEntity assignPrivilege(@RequestBody AssignPrivilegeDto assignPrivilegeDto) {
@@ -82,6 +79,7 @@ public class UserDetailsService {
             user.getPrivileges().add(assignment);
             var userDetails = userRepository.save(user);
             log.info("Privilege {} assigned to user {}", assignPrivilegeDto.getPrivilegeId(), assignPrivilegeDto.getUserId());
+            smtp.sendPrivilegeAssigned(userDetails.getPrimaryEmail(), assignment);
             return userDetails;
         }
         throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
@@ -89,6 +87,15 @@ public class UserDetailsService {
                         assignPrivilegeDto.getUserId(), assignPrivilegeDto.getPrivilegeId()));
     }
 
+    public UserDetailsEntity login(PrincipalDto principal) {
+        var ud = userRepository.findByPrimaryEmailAndPassword(principal.getUsername(), principal.getPassword())
+                .orElseThrow(EntityNotFoundException::new);
+        if (!ud.isActive()) {
+            throw new IllegalStateException(format("Account %s is not active! Activate account and login again.", ud.getId()));
+        }
+        smtp.sendLoginAction(ud.getPrimaryEmail());
+        return ud;
+    }
 
     public List<UserDetailsEntity> findAll() {
         return userRepository.findAll();

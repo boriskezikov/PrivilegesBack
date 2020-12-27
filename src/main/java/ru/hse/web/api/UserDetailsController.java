@@ -16,6 +16,7 @@ import ru.hse.web.domain.UserDetailsEntity;
 import ru.hse.web.dto.AssignPrivilegeDto;
 import ru.hse.web.dto.CreateUserInstanceDto;
 import ru.hse.web.dto.FactorDto;
+import ru.hse.web.dto.PrincipalDto;
 import ru.hse.web.service.UserDetailsService;
 
 import java.util.List;
@@ -51,5 +52,11 @@ public class UserDetailsController {
     @PostMapping("/assign")
     public UserDetailsEntity assignPrivilege(@RequestBody AssignPrivilegeDto assignPrivilegeDto) {
         return userDetailsService.assignPrivilege(assignPrivilegeDto);
+    }
+
+    @Operation(summary = "Returns user details by login/password pair")
+    @PostMapping("/login")
+    public UserDetailsEntity login(@RequestBody PrincipalDto principal){
+        return userDetailsService.login(principal);
     }
 }

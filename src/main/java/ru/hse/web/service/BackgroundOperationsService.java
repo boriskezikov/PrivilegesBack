@@ -2,6 +2,7 @@ package ru.hse.web.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.hse.web.domain.UserDetailsEntity;
@@ -19,13 +20,16 @@ public class BackgroundOperationsService {
     private final UserRepository userRepository;
     private final SMTPService smtpService;
 
-    @Scheduled(cron = "0 0/5 * * * *")
+    @Value("${bg.time.expiration_min}")
+    private int expiryTime;
+
+    @Scheduled(cron = "${bg.time.cron}")
     public void deleteUnsignedUser() {
         log.info("Background cleaner started");
         var now = LocalDateTime.now();
         var toDelete = new ArrayList<UserDetailsEntity>();
         userRepository.findAll().stream().filter(user -> !user.isActive()).forEach(user -> {
-            if (Duration.between(user.getTimeCreated(), now).toMinutes() >= 5) {
+            if (Duration.between(user.getTimeCreated(), now).toMinutes() >= expiryTime) {
                 toDelete.add(user);
                 log.info("Record {} added to remove list", user.getId());
                 smtpService.sendAccountExpired(user.getPrimaryEmail());
