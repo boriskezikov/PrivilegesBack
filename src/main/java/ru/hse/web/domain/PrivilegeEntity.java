@@ -17,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Data

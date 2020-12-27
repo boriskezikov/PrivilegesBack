@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PrincipalDto {
 
-    private String username; //mail
+    private String username;
     private String password;
 }

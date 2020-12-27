@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserDetailsEntity, BigInteger> {
 
     boolean existsByPassport(String passport);
+
     Optional<UserDetailsEntity> findByPrimaryEmailAndPassword(String mail, String pass);
 }

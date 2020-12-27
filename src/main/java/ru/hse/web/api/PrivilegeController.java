@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hse.web.domain.PrivilegeEntity;
+import ru.hse.web.dto.FindPrivilegeDTO;
 import ru.hse.web.dto.PrivilegeDto;
 import ru.hse.web.model.Rule;
 import ru.hse.web.service.PrivilegeService;
@@ -65,6 +67,7 @@ public class PrivilegeController {
         return privilegeService.updatePrivilege(dto);
     }
 
+    @Deprecated
     @Operation(summary = "Get all privilege details instance.")
     @GetMapping
     @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
@@ -86,11 +89,19 @@ public class PrivilegeController {
         privilegeService.removeById(id);
     }
 
+    @Deprecated
     @Operation(summary = "Get privilege record by id")
     @GetMapping("/{id}")
     @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
     public PrivilegeEntity getById(@PathVariable BigInteger id) {
         return privilegeService.getById(id);
+    }
+
+    @Operation(summary = "Filter searching for privileges")
+    @PostMapping("/find")
+    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
+    public List<PrivilegeEntity> find(@RequestBody @Validated FindPrivilegeDTO findPrivilegeDTO) {
+        return privilegeService.find(findPrivilegeDTO);
     }
 
 }

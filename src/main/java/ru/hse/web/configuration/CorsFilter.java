@@ -18,8 +18,7 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class CorsFilter implements Filter {
-
-
+    
     @Override
     public void doFilter(ServletRequest req,
                          ServletResponse res,

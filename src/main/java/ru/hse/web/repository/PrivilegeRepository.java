@@ -8,4 +8,5 @@ import java.math.BigInteger;
 
 @Repository
 public interface PrivilegeRepository extends JpaRepository<PrivilegeEntity, BigInteger> {
+
 }
