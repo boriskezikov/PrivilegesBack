@@ -23,8 +23,8 @@ import ru.hse.web.service.PrivilegeService;
 
 import java.util.List;
 
-@OpenAPIDefinition(info = @Info(title = "Custom database connector",
-        description = "Service for managing database connections",
+@OpenAPIDefinition(info = @Info(title = "Privilege provider service",
+        description = "Service for managing civil privileges",
         version = "1.0",
         contact = @Contact(name = "Kezikov Boris", email = "boris200898@icloud.com")))
 @ApiResponses(value = {
