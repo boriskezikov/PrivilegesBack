@@ -25,7 +25,6 @@ public class BackgroundOperationsService {
 
     @Scheduled(cron = "${bg.time.cron}")
     public void deleteUnsignedUser() {
-        log.info("Background cleaner started");
         var now = LocalDateTime.now();
         var toDelete = new ArrayList<UserDetailsEntity>();
         userRepository.findAll().stream().filter(user -> !user.isActive()).forEach(user -> {
@@ -36,6 +35,5 @@ public class BackgroundOperationsService {
             }
         });
         userRepository.deleteAll(toDelete);
-        log.info("Background cleaner finished");
     }
 }
