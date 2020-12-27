@@ -6,7 +6,7 @@ spring:
     password: adminapp
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 bg:
   time:
     expiration_min: 5

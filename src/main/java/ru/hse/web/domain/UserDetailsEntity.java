@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.hse.web.model.Role;
 import ru.hse.web.model.Rule;
 
 import javax.persistence.CascadeType;
@@ -73,4 +74,9 @@ public class UserDetailsEntity {
     @JsonIgnore
     @Column(nullable = false)
     private String factor;
+
+    @Builder.Default
+    @JsonIgnore
+    @Column(nullable = false)
+    private Role role = Role.USER;
 }

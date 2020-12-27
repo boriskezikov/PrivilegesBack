@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 import ru.hse.web.dto.ApiErrorDTO;
+import ru.hse.web.security.UnauthorizedException;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
@@ -48,5 +51,4 @@ public class ExceptionHandlerAdvice {
     protected ApiErrorDTO handleApiException(IOException ex) {
         return new ApiErrorDTO(400, ex.getClass().getName(), ex.getMessage());
     }
-
 }

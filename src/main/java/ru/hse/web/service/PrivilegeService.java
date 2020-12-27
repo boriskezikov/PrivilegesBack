@@ -10,6 +10,7 @@ import ru.hse.web.model.Rule;
 import ru.hse.web.repository.PrivilegeRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +40,14 @@ public class PrivilegeService {
         var updated = privilegeRepository.save(privilege);
         log.info("Privilege updated");
         return updated;
+    }
+
+    public void removeById(BigInteger id){
+        privilegeRepository.deleteById(id);
+    }
+
+    public PrivilegeEntity getById(BigInteger id) {
+        return privilegeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     public List<Rule> getAvailableRules(){
