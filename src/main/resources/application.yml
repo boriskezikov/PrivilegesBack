@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://ec2-54-237-135-248.compute-1.amazonaws.com:5432/dbc3hok93d5fnk"
+    url: "jdbc:postgresql://ec2-54-159-138-67.compute-1.amazonaws.com:5432/dcblgfvhghf4lc"
     driverClassName: org.postgresql.Driver
-    username: amabrdknrdfnvy
-    password: 089a2f3d631f3b8b200e85cd6cb99465b63cb34be22e6e1cc376b98c70d1c249
+    username: nvymfgadhxpfja
+    password: fbe77ba7ae4d2a35d565f1c766c1b0a0fe00add669fdc58c499488bb1f68a7ac
   jpa:
     hibernate:
       ddl-auto: create
