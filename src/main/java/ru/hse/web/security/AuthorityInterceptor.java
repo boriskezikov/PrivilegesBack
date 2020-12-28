@@ -47,6 +47,13 @@ public class AuthorityInterceptor implements Filter {
                 } else {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User does not have access to this resource");
                 }
+            }
+            else if (uri.contains("assignment")) {
+                if (authHeader.equals(CLIENT) || authHeader.equals(ADMIN)) {
+                    chain.doFilter(request, response);
+                } else {
+                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User does not have access to this resource");
+                }
             } else {
                 chain.doFilter(request, response);
             }
