@@ -50,12 +50,6 @@ public class UserDetailsController {
         userDetailsService.activateUser(factorDto);
     }
 
-    @Operation(summary = "Load all user accounts")
-    @GetMapping
-    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<UserDetailsEntity> findAll() {
-        return userDetailsService.findAll();
-    }
 
     @Operation(summary = "Assign privilege to specified user")
     @PostMapping("/assign")

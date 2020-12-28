@@ -34,6 +34,12 @@ public class AuthorityInterceptor implements Filter {
             }
         } else if (req.getMethod().toUpperCase().equals("OPTIONS")) {
             chain.doFilter(request, response);
+        } else if (uri.contains("open")) {
+            if (authHeader.equals(ADMIN) || authHeader.equals(CLIENT)) {
+                chain.doFilter(request, response);
+            } else {
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User does not have access to this resource");
+            }
         } else {
             if (uri.contains("privilege")) {
                 if (authHeader.equals(ADMIN)) {
@@ -47,8 +53,7 @@ public class AuthorityInterceptor implements Filter {
                 } else {
                     res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User does not have access to this resource");
                 }
-            }
-            else if (uri.contains("assignment")) {
+            } else if (uri.contains("assignment")) {
                 if (authHeader.equals(CLIENT) || authHeader.equals(ADMIN)) {
                     chain.doFilter(request, response);
                 } else {

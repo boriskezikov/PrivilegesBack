@@ -70,12 +70,7 @@ public class PrivilegeController {
         return privilegeService.updatePrivilege(dto);
     }
 
-    @Operation(summary = "Get all rules for rewards.")
-    @GetMapping("/rules")
-    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<Rule> getAvailableRules() {
-        return privilegeService.getAvailableRules();
-    }
+
 
     @Operation(summary = "Remove privilege record by id")
     @DeleteMapping("/{id}")
@@ -84,26 +79,4 @@ public class PrivilegeController {
         privilegeService.removeById(id);
     }
 
-
-    @Operation(summary = "Filter searching for privileges")
-    @GetMapping("/find")
-    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<PrivilegeEntity> find(@RequestBody(required = false) FindPrivilegeDTO findPrivilegeDTO) {
-        return privilegeService.findPrivilege(findPrivilegeDTO);
-    }
-
-    @Operation(summary = "Filter searching for privileges")
-    @GetMapping("{userId}/available")
-    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<PrivilegeEntity> loadAvailable(@PathVariable BigInteger userId) {
-        return privilegeService.loadAvailable(userId);
-    }
-
-    @Operation(summary = "Filter searching for privileges for anon user")
-    @GetMapping("/available")
-    @ResponseBody
-    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<PrivilegeEntity> loadAvailable(@Validated @RequestBody FindAvailablePrivilegesDTO findAvailablePrivilegesDTO) {
-        return privilegeService.loadAvailable(findAvailablePrivilegesDTO.getGrades());
-    }
 }
