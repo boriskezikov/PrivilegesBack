@@ -67,14 +67,6 @@ public class PrivilegeController {
         return privilegeService.updatePrivilege(dto);
     }
 
-    @Deprecated
-    @Operation(summary = "Get all privilege details instance.")
-    @GetMapping
-    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<PrivilegeEntity> findAll() {
-        return privilegeService.findAll();
-    }
-
     @Operation(summary = "Get all rules for rewards.")
     @GetMapping("/rules")
     @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
@@ -89,19 +81,11 @@ public class PrivilegeController {
         privilegeService.removeById(id);
     }
 
-    @Deprecated
-    @Operation(summary = "Get privilege record by id")
-    @GetMapping("/{id}")
-    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public PrivilegeEntity getById(@PathVariable BigInteger id) {
-        return privilegeService.getById(id);
-    }
 
     @Operation(summary = "Filter searching for privileges")
     @GetMapping("/find")
     @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<PrivilegeEntity> find(@RequestBody @Validated FindPrivilegeDTO findPrivilegeDTO) {
-        return privilegeService.findAssignment(findPrivilegeDTO);
+    public List<PrivilegeEntity> find(@RequestBody(required = false) FindPrivilegeDTO findPrivilegeDTO) {
+        return privilegeService.findPrivilege(findPrivilegeDTO);
     }
-
 }

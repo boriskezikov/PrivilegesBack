@@ -85,7 +85,7 @@ public class SMTPService extends Authenticator {
     @Async
     public void sendAvailablePrivilegesNotification(String targetEmail, String name, List<PrivilegeEntity> privileges) {
         var assignment = "Name: %s \n Description: %s \n Authorized ministry: %s \n Date added to registry: %s \n\n";
-        var text = format(PREFIX, name) + "We have detected that this list of privileges is available for assignment according to your info: \n %s" + SIGNATURE;
+        var text = format(PREFIX, name) + "We have detected that this list of privileges is available for assignment according to your info: \n\n %s" + SIGNATURE;
         StringBuilder sb = new StringBuilder();
         privileges.forEach(pr -> sb.append(format(assignment, pr.getName(), pr.getDescription(), pr.getLegalMinistry(), pr.getTimeCreated())).append('\n'));
         var res = format(text, sb.toString());

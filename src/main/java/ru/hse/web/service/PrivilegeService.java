@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.hse.web.domain.AssignmentEntity;
 import ru.hse.web.domain.PrivilegeEntity;
+import ru.hse.web.dto.AssignPrivilegeDto;
 import ru.hse.web.dto.CreateAssignmentDto;
 import ru.hse.web.dto.FindAssignmentDto;
 import ru.hse.web.dto.FindPrivilegeDTO;
 import ru.hse.web.dto.MoveAssignmentDto;
 import ru.hse.web.dto.PrivilegeDto;
 import ru.hse.web.mapper.PrivilegeMapper;
+import ru.hse.web.model.AssignmentStatus;
 import ru.hse.web.model.Rule;
 import ru.hse.web.repository.AssignmentRepository;
 import ru.hse.web.repository.PrivilegeRepository;
@@ -35,6 +37,7 @@ public class PrivilegeService {
     private final PrivilegeRepositoryImpl privilegeRepositoryCustom;
     private final AssignmentRepository assignmentRepository;
     private final AssignmentRepositoryImpl assignmentRepositoryCustom;
+    private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final PrivilegeMapper mapper;
     private final SMTPService smtpService;
@@ -61,9 +64,9 @@ public class PrivilegeService {
         return updated;
     }
 
-    public List<PrivilegeEntity> findAssignment(FindPrivilegeDTO findPrivilegeDTO) {
+    public List<PrivilegeEntity> findPrivilege(FindPrivilegeDTO findPrivilegeDTO) {
         List<PrivilegeEntity> privileges;
-        if (findPrivilegeDTO.getCriteria() == null) {
+        if (findPrivilegeDTO == null) {
             privileges = privilegeRepository.findAll();
         } else {
             privileges = privilegeRepositoryCustom.find(findPrivilegeDTO.getCriteria(), findPrivilegeDTO.getSort());
@@ -95,10 +98,16 @@ public class PrivilegeService {
         var user = userRepository.findById(saved.getUser().getId()).orElseThrow(EntityNotFoundException::new);
         var privilege = privilegeRepository.findById(saved.getPrivilege().getId()).orElseThrow(EntityNotFoundException::new);
         smtpService.sendAssignmentStatusUpdated(user.getPrimaryEmail(), buildFullName(user.getFirstName(), user.getLastName()), privilege, saved.getAssignmentStatus());
+        if (saved.getAssignmentStatus().equals(AssignmentStatus.APPROVED)){
+            userDetailsService.assignPrivilege(AssignPrivilegeDto.builder().userId(user.getId()).privilegeId(privilege.getId()).build());
+        }
         return saved;
     }
 
     public List<AssignmentEntity> findAssignment(FindAssignmentDto findAssignmentDto) {
+        if (findAssignmentDto == null) {
+            return assignmentRepository.findAll();
+        }
         return assignmentRepositoryCustom.find(findAssignmentDto.getCriteria(), findAssignmentDto.getSort());
     }
 

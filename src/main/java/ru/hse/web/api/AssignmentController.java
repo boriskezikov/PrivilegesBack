@@ -20,8 +20,7 @@ import ru.hse.web.service.PrivilegeService;
 import java.util.List;
 
 import static ru.hse.web.Constants.ADMIN;
-import static ru.hse.web.Constants.CLIENT
-        ;
+import static ru.hse.web.Constants.CLIENT;
 @Tag(name = "AssignmentController", description = "Allows to operate with assignments")
 @RestController
 @RequestMapping("/api/v1/privilege/assignment")
@@ -44,10 +43,10 @@ public class AssignmentController {
         return privilegeService.createAssignment(createAssignmentDto);
     }
 
-    @Operation(summary = "Create new assignment")
+    @Operation(summary = "Find assignments")
     @GetMapping
     @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
-    public List<AssignmentEntity> find(@RequestBody FindAssignmentDto findAssignmentDto){
+    public List<AssignmentEntity> find(@RequestBody(required = false) FindAssignmentDto findAssignmentDto){
         return privilegeService.findAssignment(findAssignmentDto);
     }
 }
