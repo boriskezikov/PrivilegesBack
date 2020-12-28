@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.ManyToAny;
 import ru.hse.web.model.Role;
 import ru.hse.web.model.Rule;
 
@@ -24,8 +23,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -92,8 +89,4 @@ public class UserDetailsEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "form_id")
-    private FormEntity form;
 }

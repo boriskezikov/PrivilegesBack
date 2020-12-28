@@ -120,9 +120,10 @@ public class PrivilegeService {
         privilegeRepository.deleteById(id);
     }
 
-//    public List<PrivilegeEntity> loadAvailable(BigInteger userId){
-//
-//    }
+    public List<PrivilegeEntity> loadAvailable(BigInteger userId){
+        var user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        return null;
+    }
 
 
     private void notifyAllAssignedUsers(PrivilegeEntity privilegeEntity) {
