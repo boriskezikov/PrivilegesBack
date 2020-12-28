@@ -2,6 +2,7 @@ package ru.hse.web.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +31,14 @@ public class UserDetailsService {
     private final UserRepository userRepository;
     private final PrivilegeRepository privilegeRepository;
     private final SMTPService smtp;
+    private static final int passportLength = 10;
 
     @Transactional
     public UserDetailsEntity createInactiveUser(CreateUserInstanceDto createUserInstanceDto) {
         String userPassport = createUserInstanceDto.getPassport();
+        if (userPassport.length() != passportLength) {
+            throw new IllegalStateException((format("Passport length must be equal %s digits", passportLength)));
+        }
         var exists = userRepository.existsByPassport(userPassport);
         if (exists) {
             throw new IllegalStateException(format("User with passport №%s already exists", userPassport));
