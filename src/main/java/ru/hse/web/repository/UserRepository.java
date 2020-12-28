@@ -12,5 +12,7 @@ public interface UserRepository extends JpaRepository<UserDetailsEntity, BigInte
 
     boolean existsByPassport(String passport);
 
+    boolean existsByPrimaryEmail(String primary_email);
+
     Optional<UserDetailsEntity> findByPrimaryEmailAndPassword(String mail, String pass);
 }

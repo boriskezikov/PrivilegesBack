@@ -38,21 +38,40 @@ public class PrivilegeRepositoryImpl {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        ofNullable(criteria.getIds()).ifPresent(option -> {
-            CriteriaBuilder.In<BigInteger> inClause = criteriaBuilder.in(root.get("id"));
-            option.forEach(inClause::value);
-            predicates.add(inClause);
+        predicates.add(criteriaBuilder.equal(root.get("availableForAssignment"), true));
+
+        ofNullable(criteria).ifPresent((criteria_tmp) -> {
+            ofNullable(criteria.getIds()).ifPresent(option -> {
+                CriteriaBuilder.In<BigInteger> inClause = criteriaBuilder.in(root.get("id"));
+                option.forEach(inClause::value);
+                predicates.add(inClause);
+            });
+
+            ofNullable(criteria.getGrades())
+                    .ifPresent(option -> option.forEach(member -> {
+                        predicates.add(criteriaBuilder.isMember(member, root.get("gradesRequired")));
+                    }));
+
+            ofNullable(criteria.getLegalMinistry())
+                    .ifPresent(option -> predicates.add(criteriaBuilder.equal(root.get("legalMinistry"), option)));
         });
 
-        ofNullable(criteria.getGrades())
-                .ifPresent(option -> option.forEach(member -> {
-                    predicates.add(criteriaBuilder.isMember(member, root.get("gradesRequired")));
-                }));
-
-        ofNullable(criteria.getLegalMinistry())
-                .ifPresent(option -> predicates.add(criteriaBuilder.equal(root.get("legalMinistry"), option)));
-
-        predicates.add(criteriaBuilder.equal(root.get("availableForAssignment"), true));
+//        ofNullable(criteria)
+//                .ifPresent(option -> predicates.add(criteriaBuilder.equal(root.get("availableForAssignment"), true)));
+//
+//        ofNullable(criteria.getIds()).ifPresent(option -> {
+//            CriteriaBuilder.In<BigInteger> inClause = criteriaBuilder.in(root.get("id"));
+//            option.forEach(inClause::value);
+//            predicates.add(inClause);
+//        });
+//
+//        ofNullable(criteria.getGrades())
+//                .ifPresent(option -> option.forEach(member -> {
+//                    predicates.add(criteriaBuilder.isMember(member, root.get("gradesRequired")));
+//                }));
+//
+//        ofNullable(criteria.getLegalMinistry())
+//                .ifPresent(option -> predicates.add(criteriaBuilder.equal(root.get("legalMinistry"), option)));
 
         ofNullable(sort)
                 .ifPresent(sortingStrategy -> {

@@ -10,5 +10,5 @@ spring:
 bg:
   time:
     expiration_min: 5
-    remove-cron: "0 0/2 * * * *"
-    available-cron: "0 0/5 * * * *"
+    remove-cron: "0 0/5 * * * *"
+    available-cron: "0 0 0/1 * * *"
