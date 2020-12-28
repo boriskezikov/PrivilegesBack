@@ -68,6 +68,7 @@ public class PrivilegeService {
         List<PrivilegeEntity> privileges;
         if (findPrivilegeDTO == null) {
             privileges = privilegeRepository.findAll();
+            privileges.removeIf(item -> (!item.isAvailableForAssignment()));
         } else {
             privileges = privilegeRepositoryCustom.find(findPrivilegeDTO.getCriteria(), findPrivilegeDTO.getSort());
         }

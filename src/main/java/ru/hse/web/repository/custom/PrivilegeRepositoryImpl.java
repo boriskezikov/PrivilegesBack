@@ -52,6 +52,8 @@ public class PrivilegeRepositoryImpl {
         ofNullable(criteria.getLegalMinistry())
                 .ifPresent(option -> predicates.add(criteriaBuilder.equal(root.get("legalMinistry"), option)));
 
+        predicates.add(criteriaBuilder.equal(root.get("availableForAssignment"), true));
+
         ofNullable(sort)
                 .ifPresent(sortingStrategy -> {
                     if (Arrays.stream(PrivilegeDto.class.getDeclaredFields())
