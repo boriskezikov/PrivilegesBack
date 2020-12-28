@@ -22,8 +22,11 @@ import ru.hse.web.repository.custom.PrivilegeRepositoryImpl;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.hse.web.service.Utils.buildFullName;
@@ -120,9 +123,31 @@ public class PrivilegeService {
         privilegeRepository.deleteById(id);
     }
 
-    public List<PrivilegeEntity> loadAvailable(BigInteger userId){
+    public List<PrivilegeEntity> loadAvailable(BigInteger userId) {
         var user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-        return null;
+        var privilegeList = findPrivilege(null);
+        var resultSet = new ArrayList<PrivilegeEntity>();
+        privilegeList.forEach(pr -> {
+            var userGrades = user.getGrades();
+            userGrades.retainAll(pr.getGradesRequired());
+            if (userGrades.size() > 0) {
+                resultSet.add(pr);
+            }
+        });
+        return resultSet;
+    }
+
+    public List<PrivilegeEntity> loadAvailable(Set<Rule> grades) {
+        var privilegeList = findPrivilege(null);
+        var resultSet = new ArrayList<PrivilegeEntity>();
+        privilegeList.forEach(pr -> {
+            var gradesCopy = new HashSet<Rule>(grades);
+            gradesCopy.retainAll(pr.getGradesRequired());
+            if (gradesCopy.size() > 0) {
+                resultSet.add(pr);
+            }
+        });
+        return resultSet;
     }
 
 

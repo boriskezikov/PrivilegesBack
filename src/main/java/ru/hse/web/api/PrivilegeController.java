@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hse.web.domain.PrivilegeEntity;
+import ru.hse.web.dto.FindAvailablePrivilegesDTO;
 import ru.hse.web.dto.FindPrivilegeDTO;
 import ru.hse.web.dto.PrivilegeDto;
 import ru.hse.web.model.Rule;
@@ -30,6 +32,7 @@ import ru.hse.web.service.PrivilegeService;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 import static ru.hse.web.Constants.ADMIN;
 import static ru.hse.web.Constants.CLIENT;
@@ -87,5 +90,20 @@ public class PrivilegeController {
     @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
     public List<PrivilegeEntity> find(@RequestBody(required = false) FindPrivilegeDTO findPrivilegeDTO) {
         return privilegeService.findPrivilege(findPrivilegeDTO);
+    }
+
+    @Operation(summary = "Filter searching for privileges")
+    @GetMapping("{userId}/available")
+    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
+    public List<PrivilegeEntity> loadAvailable(@PathVariable BigInteger userId) {
+        return privilegeService.loadAvailable(userId);
+    }
+
+    @Operation(summary = "Filter searching for privileges for anon user")
+    @GetMapping("/available")
+    @ResponseBody
+    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
+    public List<PrivilegeEntity> loadAvailable(@Validated @RequestBody FindAvailablePrivilegesDTO findAvailablePrivilegesDTO) {
+        return privilegeService.loadAvailable(findAvailablePrivilegesDTO.getGrades());
     }
 }

@@ -71,19 +71,19 @@ public class UserDetailsService {
     }
 
     public UserDetailsEntity assignPrivilege(@RequestBody AssignPrivilegeDto assignPrivilegeDto) {
-        var assignment = privilegeRepository.findById(assignPrivilegeDto.getPrivilegeId()).orElseThrow(EntityNotFoundException::new);
+        var privilege = privilegeRepository.findById(assignPrivilegeDto.getPrivilegeId()).orElseThrow(EntityNotFoundException::new);
         var user = userRepository.findById(assignPrivilegeDto.getUserId()).orElseThrow(EntityNotFoundException::new);
         var userRules = user.getGrades();
-        var assignmentRules = assignment.getGradesRequired();
+        var assignmentRules = privilege.getGradesRequired();
         userRules.retainAll(assignmentRules);
-        if (assignment.isAvailableForAssignment() && userRules.size() > 0) {
-            user.getPrivileges().add(assignment);
+        if (privilege.isAvailableForAssignment() && userRules.size() > 0) {
+            user.getPrivileges().add(privilege);
             var userDetails = userRepository.save(user);
             log.info("Privilege {} assigned to user {}", assignPrivilegeDto.getPrivilegeId(), assignPrivilegeDto.getUserId());
-            smtp.sendPrivilegeAssignedNotification(userDetails.getPrimaryEmail(), assignment, buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
+            smtp.sendPrivilegeAssignedNotification(userDetails.getPrimaryEmail(), privilege, buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
             return userDetails;
         }
-        if (!assignment.isAvailableForAssignment()) {
+        if (!privilege.isAvailableForAssignment()) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
                     format("Privilege %s is not available for assignment",
                             assignPrivilegeDto.getPrivilegeId()));
