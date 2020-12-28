@@ -107,7 +107,9 @@ public class PrivilegeService {
     }
 
     public List<PrivilegeEntity> findAll() {
-        return privilegeRepository.findAll();
+        List<PrivilegeEntity> Available = privilegeRepository.findAll();
+        Available.removeIf(item -> (!item.isAvailableForAssignment()));
+        return Available;
     }
 
     public void removeById(BigInteger id) {

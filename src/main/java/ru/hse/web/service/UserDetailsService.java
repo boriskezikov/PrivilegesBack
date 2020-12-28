@@ -80,16 +80,22 @@ public class UserDetailsService {
         var userRules = user.getGrades();
         var assignmentRules = assignment.getGradesRequired();
         userRules.retainAll(assignmentRules);
-        if (userRules.size() > 0) {
+        if (assignment.isAvailableForAssignment() && userRules.size() > 0) {
             user.getPrivileges().add(assignment);
             var userDetails = userRepository.save(user);
             log.info("Privilege {} assigned to user {}", assignPrivilegeDto.getPrivilegeId(), assignPrivilegeDto.getUserId());
             smtp.sendPrivilegeAssignedNotification(userDetails.getPrimaryEmail(), assignment, buildFullName(userDetails.getFirstName(), userDetails.getLastName()));
             return userDetails;
         }
-        throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
-                format("User %s doesn't have enough grades to assign privilege %s",
-                        assignPrivilegeDto.getUserId(), assignPrivilegeDto.getPrivilegeId()));
+        if (!assignment.isAvailableForAssignment()) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
+                    format("Privilege %s is not available for assignment",
+                            assignPrivilegeDto.getPrivilegeId()));
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,
+                    format("User %s doesn't have enough grades to assign privilege %s",
+                            assignPrivilegeDto.getUserId(), assignPrivilegeDto.getPrivilegeId()));
+        }
     }
 
     public UserDetailsEntity login(PrincipalDto principal) {
