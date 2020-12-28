@@ -31,7 +31,7 @@ public class PrivilegeRepositoryImpl {
     private final EntityManager entityManager;
 
 
-    public List<PrivilegeEntity> find(FindPrivilegeDTO.SCriteria criteria, Sort sort) {
+    public List<PrivilegeEntity> find(FindPrivilegeDTO.FCriteria criteria, Sort sort) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<PrivilegeEntity> query = criteriaBuilder.createQuery(PrivilegeEntity.class);
         Root<PrivilegeEntity> root = query.from(PrivilegeEntity.class);

@@ -16,11 +16,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class FindPrivilegeDTO {
 
-    private SCriteria criteria;
+    private FCriteria criteria;
     private Sort sort;
 
     @Data
-    public static class SCriteria {
+    public static class FCriteria {
         private List<BigInteger> ids;
         private String legalMinistry;
         private Set<Rule> grades;

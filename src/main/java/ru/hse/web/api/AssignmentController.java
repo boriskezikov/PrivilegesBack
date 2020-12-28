@@ -49,4 +49,6 @@ public class AssignmentController {
     public List<AssignmentEntity> find(@RequestBody(required = false) FindAssignmentDto findAssignmentDto){
         return privilegeService.findAssignment(findAssignmentDto);
     }
+
+
 }

@@ -2,7 +2,6 @@ package ru.hse.web.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.ap.internal.util.Collections;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,14 +12,11 @@ import ru.hse.web.dto.AssignPrivilegeDto;
 import ru.hse.web.dto.CreateUserInstanceDto;
 import ru.hse.web.dto.FactorDto;
 import ru.hse.web.dto.PrincipalDto;
-import ru.hse.web.model.Rule;
 import ru.hse.web.repository.PrivilegeRepository;
 import ru.hse.web.repository.UserRepository;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Random;
 
 import static java.lang.String.format;
 import static ru.hse.web.service.Utils.buildFullName;

@@ -7,6 +7,6 @@ public enum Rule {
     WAR_VETERAN,
     STUDENT,
     EMERGENCY_LIQUIDATOR,
-    RETIREE,
+    WORKING,
     ASSIGNED_TO_STATE_AWARD
 }

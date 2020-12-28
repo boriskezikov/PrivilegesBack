@@ -99,7 +99,7 @@ public class PrivilegeService {
         var user = userRepository.findById(saved.getUser().getId()).orElseThrow(EntityNotFoundException::new);
         var privilege = privilegeRepository.findById(saved.getPrivilege().getId()).orElseThrow(EntityNotFoundException::new);
         smtpService.sendAssignmentStatusUpdated(user.getPrimaryEmail(), buildFullName(user.getFirstName(), user.getLastName()), privilege, saved.getAssignmentStatus());
-        if (saved.getAssignmentStatus().equals(AssignmentStatus.APPROVED)){
+        if (saved.getAssignmentStatus().equals(AssignmentStatus.APPROVED)) {
             userDetailsService.assignPrivilege(AssignPrivilegeDto.builder().userId(user.getId()).privilegeId(privilege.getId()).build());
         }
         return saved;
@@ -116,19 +116,14 @@ public class PrivilegeService {
         return Arrays.asList(Rule.values());
     }
 
-    public List<PrivilegeEntity> findAll() {
-        List<PrivilegeEntity> Available = privilegeRepository.findAll();
-        Available.removeIf(item -> (!item.isAvailableForAssignment()));
-        return Available;
-    }
-
     public void removeById(BigInteger id) {
         privilegeRepository.deleteById(id);
     }
 
-    public PrivilegeEntity getById(BigInteger id) {
-        return privilegeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
+//    public List<PrivilegeEntity> loadAvailable(BigInteger userId){
+//
+//    }
+
 
     private void notifyAllAssignedUsers(PrivilegeEntity privilegeEntity) {
         var toNotify = userRepository.findAll().stream().filter(user -> {

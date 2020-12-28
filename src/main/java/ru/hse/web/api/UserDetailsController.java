@@ -71,4 +71,11 @@ public class UserDetailsController {
         return userDetailsService.login(principal);
     }
 
+//    @Operation(summary = "Save new question form")
+//    @PostMapping("/{userDetailsId}/form")
+//    @Parameter(in = ParameterIn.HEADER, name = "X_GRANT_ID", required = true, schema = @Schema(type = "string", allowableValues = {ADMIN, CLIENT}))
+//    public UserDetailsEntity createForm(@RequestBody FormEntity formEntity, @PathVariable BigInteger userDetailsId) {
+//        return userDetailsService.createForm(formEntity, userDetailsId);
+//    }
+
 }
