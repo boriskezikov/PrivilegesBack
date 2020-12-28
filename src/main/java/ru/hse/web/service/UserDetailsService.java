@@ -36,12 +36,17 @@ public class UserDetailsService {
     @Transactional
     public UserDetailsEntity createInactiveUser(CreateUserInstanceDto createUserInstanceDto) {
         String userPassport = createUserInstanceDto.getPassport();
+        String userEmail = createUserInstanceDto.getMail();
         if (userPassport.length() != passportLength) {
             throw new IllegalStateException((format("Passport length must be equal %s digits", passportLength)));
         }
         var exists = userRepository.existsByPassport(userPassport);
         if (exists) {
             throw new IllegalStateException(format("User with passport №%s already exists", userPassport));
+        }
+        exists = userRepository.existsByPrimaryEmail(userEmail);
+        if (exists) {
+            throw new IllegalStateException(format("User with email %s already exists", userEmail));
         }
         var factorCode = generateFactorCode();
         UserDetailsEntity inactiveUser = UserDetailsEntity.builder()
